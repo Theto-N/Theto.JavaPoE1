@@ -72,7 +72,7 @@ class Login {
         }
         return true;
     }
-    
+    //Registration for user 
     public String registerUser(String username, String password, String cellPhone){
         this.usernameSaved = username;
         this.passwordSaved = password;
@@ -80,9 +80,11 @@ class Login {
         return"User is successfully registered";
     }
     
+    // Login details/inputs verification
     public boolean loginUser(String username, String password){
         return username.equals(this.usernameSaved) && password.equals(this.passwordSaved);
     }
+    //Returning of login details for user 
     public String returnLoginStatus(String username, String password){
         if(loginUser(username, password)){
             return "Welcome" + firstName + "," + lastName + "is great to see you again.";
