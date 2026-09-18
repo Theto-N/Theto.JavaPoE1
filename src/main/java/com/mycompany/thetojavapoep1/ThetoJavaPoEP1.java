@@ -20,6 +20,7 @@ public class ThetoJavaPoEP1 {
         String password;
         String cellPhone;
         
+        
         //Scanner user inputs
         Scanner myInput = new Scanner(System.in);
         
@@ -29,12 +30,14 @@ public class ThetoJavaPoEP1 {
         System.out.print("Enter your lastname: ");
         lastName = myInput.next();
         
+         Login login = new Login(firstName, lastName);
+        
         //Using while loop to following conditions.
         //Enter the username.
         while (true){
             System.out.print("Enter your username: ");
             username = myInput.nextLine();
-            if (checkUsername(username)){
+            if (login.checkUserName(username)){
                 System.out.println("Username successfully captured.");
                 break;
             }else{
@@ -48,7 +51,7 @@ public class ThetoJavaPoEP1 {
         while (true){
             System.out.print("Enter your password: ");
             password = myInput.nextLine();
-            if (checkPassword(password)){
+            if (login.checkPassword(password)){
                 System.out.println("Password successfully captured.");
                 break;
             }else{
@@ -58,22 +61,38 @@ public class ThetoJavaPoEP1 {
             }
         }
         
+        
+       
         //Entering your cell phone number.
         while (true){
             System.out.println("Enter your cellphone: ");
             cellPhone = myInput.nextLine();
-            if (checkcCellphone(cellPhone)){
+            if (login.checkCellphone(cellPhone)){
                 System.out.println("Cell phone number successfully added.");
+                break;
             }else{
                 System.out.println("Cell phone number incorrectly formatted or ");
                 System.out.print("does not contain international code");
             }
         }
+        //Registration 
+        System.out.println(login.registerUser(username, password, cellPhone));
         
-           
+        //LOGIN and while loop to test the conditions.
+        while(true){
+            System.out.print("Username for user to login: ");
+            String loginUsername = myInput.nextLine();
+            System.out.print("Password for user to login: ");
+            String loginPassword = myInput.nextLine();
+            String status = login.returnLoginStatus(loginUsername, loginPassword);
+            System.out.println(status);
         
-        
-        
-    }
-        
+            if(login.loginUser(loginUsername, loginPassword)){
+            break;
+             
+           }
+       
+        }
+       myInput.close();
+    }      
 }
