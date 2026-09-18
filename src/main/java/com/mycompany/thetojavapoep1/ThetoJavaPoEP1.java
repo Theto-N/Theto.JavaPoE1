@@ -51,7 +51,7 @@ public class ThetoJavaPoEP1 {
         while (true){
             System.out.print("Enter your password: ");
             password = myInput.nextLine();
-            if (login.checkPassword(password)){
+            if (login.checkPasswordComplexity(password)){
                 System.out.println("Password successfully captured.");
                 break;
             }else{

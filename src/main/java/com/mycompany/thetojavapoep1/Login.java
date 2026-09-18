@@ -40,7 +40,7 @@ class Login {
         }
     }
     //Method for checking the correct password
-    public static boolean checkPassword(String password){
+    public static boolean checkPasswordComplexity(String password){
         if(password.length()<8){
             return false;
         }
@@ -53,14 +53,18 @@ class Login {
             if(Character.isUpperCase(c))
                 hasCap = true; 
         }
-        if(Character.isDigit(0)){
+        char c = 0;
+        if(Character.isDigit(c)){
             hasNum = true;
         }
-        char c = 0;
+        
         if( c == '@' || c == '$'){
             hasSpec = true;
         }
         return hasCap && hasNum && hasSpec;
+    }
+    public boolean checkPassword(String password){
+        return checkPasswordComplexity(password);
     }
     //Method for checking the correct cellphone number 
     public static boolean checkCellphone(String cellPhone){
@@ -74,6 +78,15 @@ class Login {
     }
     //Registration for user 
     public String registerUser(String username, String password, String cellPhone){
+        if(!checkUserName(username)){
+            return"Username is not correctly formatted, please ensure that your username contains an underscore and is no more than 5 characters in length.";
+        }
+        if(!checkPasswordComplexity(password)){
+            return"Password is not correctly formatted, please ensure that the password contains at least 8 characters, a capital letter, a number and a special character.";
+        }
+        if(!checkCellphone(cellPhone)){
+            return"Cell phone number incorrectly formatted or does not contain international code";
+        }
         this.usernameSaved = username;
         this.passwordSaved = password;
         this.cellPhoneSaved = cellPhone;
