@@ -5,6 +5,7 @@
 package com.mycompany.thetojavapoep1;
 
 import java.util.Scanner;
+import java.util.ArrayList;
 
 /**
  *
@@ -93,6 +94,79 @@ public class ThetoJavaPoEP1 {
            }
        
         }
+        
+      
+       
+       //PART 2-Sending Messages after loggedin.
+       
+       
+       System.out.println("Welcome to QuickChart.");
+       System.out.print("How many messages do you want to enter");
+       int total = Integer.parseInt(myInput.nextLine().trim());
+       int entered = 0;
+       
+       ArrayList<Message> sentMessages = new ArrayList<>();
+       
+       while (true){
+           System.out.println("\n1) Send Message");
+           System.out.println("\n2) Show recently sent message");
+           System.out.println("\n3) Quit");
+           System.out.print("Choose: ");
+           String option = myInput.nextLine().trim();
+            int menuChoice = 0;
+           
+           if (option == ("1")){
+               System.out.print("Enter recipient number (+27...)");
+               String recipient = myInput.nextLine();
+               System.out.print("Enter message (max 250 chars): ");
+               String text = myInput.nextLine();
+               
+               Message msg = new Message(recipient, text, entered);
+               
+               //Check the recipient
+               String recipientCheck = msg.checkRecipientCell();
+               System.out.println(recipientCheck);
+               if (recipientCheck.contains("incorrectly")){
+               continue;
+           }
+               //Check the length of the message
+               String messagesCheck = msg.checkMessage();
+               System.out.println(messagesCheck);
+               if (messagesCheck.contains("exceeds")){
+                   continue;  
+               }
+               
+               System.out.println("Message Hash: " + msg.createMessageHash());
+               System.out.println("\n1) Send");
+               System.out.println("\n2) Disregard");
+               System.out.println("\n3) Store");
+               System.out.print("Select");
+               int sendOption = Integer.parseInt(myInput.nextLine().trim());
+               
+               System.out.println(msg.SentMessage(sendOption));
+               
+               if (sendOption == 1){
+                   sentMessages.add(msg);
+                   System.out.println(msg.printMessages());
+                   entered++;
+               } else if (sendOption == 3){
+                   msg.storeMessage();
+                   entered++;
+               }else if (sendOption == 2){
+                   System.out.println("Message disregarded.");
+           }
+               
+           } else if (menuChoice == 2){
+               System.out.println("Coming Soon.");
+           } else if (menuChoice == 3){
+               System.out.println("Total messages sent: ");
+               System.out.println("Quitting. Total sent in session: " );
+               break;
+           }
+           
+       }
+       
+       System.out.println("Total message sent: ");
        myInput.close();
     }      
 }
