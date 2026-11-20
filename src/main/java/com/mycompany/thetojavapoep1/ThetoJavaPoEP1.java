@@ -99,7 +99,7 @@ public class ThetoJavaPoEP1 {
        
        //PART 2-Sending Messages after loggedin.
        
-       
+       //Display welcoming and showing how many message to enter
        System.out.println("Welcome to QuickChart.");
        System.out.print("How many messages do you want to enter");
        int total = Integer.parseInt(myInput.nextLine().trim());
@@ -107,6 +107,7 @@ public class ThetoJavaPoEP1 {
        
        ArrayList<Message> sentMessages = new ArrayList<>();
        
+       //While loop to choose options
        while (true){
            System.out.println("\n1) Send Message");
            System.out.println("\n2) Show recently sent message");
@@ -136,6 +137,7 @@ public class ThetoJavaPoEP1 {
                    continue;  
                }
                
+               //
                System.out.println("Message Hash: " + msg.createMessageHash());
                System.out.println("\n1) Send");
                System.out.println("\n2) Disregard");
@@ -145,6 +147,7 @@ public class ThetoJavaPoEP1 {
                
                System.out.println(msg.SentMessage(sendOption));
                
+               //Options to select sending message
                if (sendOption == 1){
                    sentMessages.add(msg);
                    System.out.println(msg.printMessages());
@@ -166,7 +169,108 @@ public class ThetoJavaPoEP1 {
            
        }
        
+       //Giving out total number of messages sent
        System.out.println("Total message sent: ");
+       
+       //Part 3 
+       StoredMessages stored = new StoredMessages();
+       System.out.println("=== QUICKCHAT - STORED MESSAGES ===");
+       //Check if it run first and test
+       if (stored.getMessageCount() == 0) {
+           stored.addMessage("00", "00:0:DIDCAKE", "+27834557896", "Did you get the cake?", "Sent");
+           stored.addMessage("01", "01:1:WHETIME", "+27838884567", "Where are you? You are late!", "I have asked you to be on time.", "Stored");
+           stored.addMessage("02", "02:2:YOHGATE", "+27834484567", "Yohooo, I am at your gate.", "Disregard");
+           stored.addMessage("03", "03:3:ITTIME", "It is dinner time !", "Sent");
+           stored.addMessage("04", "04:4:OKYOU", "+27838884567", "Ok, I am leaving without you.", "Stored");
+           System.out.println("Test data loaded: 5 messages (2 Sent, 1 Desregard, 2 Stored).");
+       }
+       
+       int option;
+       do {
+           System.out.println("\n=== MAIN MENU ===");
+           System.out.println("1) Add New Message");
+           System.out.println("2) Open Stored Messages Menu");
+           System.out.println("3) Show All 5 Arrays (for marking)");
+           System.out.println("4) Quit");
+           System.out.println("Choose option");
+           option = stored.validateMenuOption(4, myInput);
+           
+           switch (option) {
+               case 1:
+                   addNewMessage(myInput, stored);
+                   break;
+               case 2:
+                   stored.showStoredMessagesMenu(myInput);
+                   break;
+               case 3:
+                   showAllArrays(stored);
+                   break;
+               case 4:
+                   System.out.println("Goodbye!");
+                   break;
+           }
+       } while (option != 4);
+       
+       
        myInput.close();
-    }      
+    } 
+    
+    //Add message so arrays update
+    private static void addNewMessage(Scanner myInput, StoredMessages stored) {
+        System.out.println("\n--- Add New Message ---");
+        System.out.println("Enter Messsage ID: ");
+        String id = myInput.nextLine();
+        System.out.println("Enter Message Hash: ");
+        String hash = myInput.nextLine();
+        System.out.println("Enter Recipient: ");
+        String recipient = myInput.nextLine();
+        System.out.println("Enter Message Text: ");
+        String text = myInput.nextLine();
+        
+        System.out.println("Enter Status:");
+        System.out.println("1) Sent");
+        System.out.println("2) Stored");
+        System.out.println("3) Disregard");
+        System.out.print("Choose option");
+        int statusChoice = stored.validateMenuOption(3, myInput);
+        
+        String status;
+        if (statusChoice == 1) {
+            status = "Sent";
+        } else if (statusChoice == 2) {
+            status = "Stored";
+        } else {
+            status = "Disregard";
+        }
+        
+        stored.addMessage(id, hash, recipient, text, status);
+        System.out.println("Message successfully added as: " + status);
+        System.out.println("All 5 arrays updated automatically.");
+    }
+    
+    //Show the 5 arrays 
+    private static void showAllArrays(StoredMessages stored) {
+        System.out.println("\n--- ARRAYS ---");
+        
+        System.out.println("\nSent Messages:");
+        for (String s : stored.getSentMessages()) {
+            System.out.println("-" + s);
+        }
+        System.out.println("\nDisregard Messages:");
+        for (String s : stored.getDisregardedMessages()) {
+            System.out.println("-" + s);
+        }
+        System.out.println("\nStored Messages:");
+        for (String s : stored.getStoredMessages()) {
+            System.out.println("-" + s);
+        }
+        System.out.println("\nMessage Hashes:");
+        for (String s : stored.getMessageHash()) {
+            System.out.println("-" + s);
+        }
+        System.out.println("\nMessage IDs:");
+        for (String s : stored.getMessageID()) {
+            System.out.println("-" + s);
+        }  
+    }
 }
