@@ -27,6 +27,7 @@ public class Message {
         this.messageID = generateMessageID();
     }
     
+    //
     public String generateMessageID(){
             Random rand = new Random();
             String id = "";
@@ -34,6 +35,7 @@ public class Message {
             return id;
     }
     
+    //Check if recipient cellphone numbers are valid
     public String checkRecipientCell(){
         if (recipient != null && recipient.startsWith("+") && recipient.length() <= 13){
         return "Cellphone number successfully captured.";
@@ -42,6 +44,7 @@ public class Message {
             }
     }
     
+    //Will check message characters
     public String checkMessage(){
         if (messageText.length()>250){
             return "Message exceeds 250 characters by " + (messageText.length()-250) +", Please reduce size.";
@@ -50,6 +53,7 @@ public class Message {
         }
     }
     
+    //Check and tracking the messages
     public String createMessageHash(){
         String[] words = messageText.trim().split("\\s+");
         if (words.length == 1){
@@ -59,7 +63,7 @@ public class Message {
         String last = words [words.length - 1];
         return messageID.substring(0, 2) + ":" + messageNumber + ":" + (first + last).toUpperCase();
     }
-    
+    //Checking message if sent
     public String SentMessage(int option){
         if (option == 1){
             totalMessages++;
@@ -72,7 +76,7 @@ public class Message {
         }
         return "Invalid option";
     }
-    
+    //Checking the stored messages
     public void storeMessage(){
         try {
             FileWriter fw = new FileWriter("storedMessages.json", true);
@@ -83,13 +87,14 @@ public class Message {
         }
     }
     
+    //Message print 
     public String printMessages(){
         return "MessageID: " + messageID + 
                 "\nMessageHash: "  + createMessageHash() + "\n" +
                  "\nRecipient: " + recipient + 
                         "\nMessage: " + messageText;           
     }
-    
+    //Return the number of total message
     public int returnTotalMessages() {
         return totalMessages;
     }

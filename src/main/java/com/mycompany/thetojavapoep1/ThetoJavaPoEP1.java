@@ -178,12 +178,12 @@ public class ThetoJavaPoEP1 {
        //Check if it run first and test
        if (stored.getMessageCount() == 0) {
            stored.addMessage("00", "00:0:DIDCAKE", "+27834557896", "Did you get the cake?", "Sent");
-           stored.addMessage("01", "01:1:WHETIME", "+27838884567", "Where are you? You are late!", "I have asked you to be on time.", "Stored");
-           stored.addMessage("02", "02:2:YOHGATE", "+27834484567", "Yohooo, I am at your gate.", "Disregard");
-           stored.addMessage("03", "03:3:ITTIME", "It is dinner time !", "Sent");
+           stored.addMessage("01", "01:1:WHETIME", "+27838884567", "Where are you? You are late! I have asked you to be on time.", "Stored");
+           stored.addMessage("02", "02:2:YOHGATE", "+27834484567", "Yohoooo, I am at your gate.", "Disregard");
+           stored.addMessage("0838884567", "08:4:ITTIME", "0838884567", "It is dinner time!", "Sent");
            stored.addMessage("04", "04:4:OKYOU", "+27838884567", "Ok, I am leaving without you.", "Stored");
-           System.out.println("Test data loaded: 5 messages (2 Sent, 1 Desregard, 2 Stored).");
-       }
+           System.out.println("Test data loaded: 5 messages (2 Sent, 1 Disregard, 2 Stored).");
+        }
        
        int option;
        do {

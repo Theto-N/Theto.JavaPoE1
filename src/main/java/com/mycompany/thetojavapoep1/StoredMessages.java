@@ -4,6 +4,7 @@
  */
 package com.mycompany.thetojavapoep1;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -16,202 +17,135 @@ import java.util.Scanner;
  * @author Theto
  */
 class StoredMessages {
+    
+    // Arrays required by Part 3
+    private ArrayList<String> sentMessages = new ArrayList<>();
+    private ArrayList<String> disregardedMessages = new ArrayList<>();
+    private ArrayList<String> storedMessages = new ArrayList<>();
+    private ArrayList<String> messageHashes = new ArrayList<>();
+    private ArrayList<String> messageIDs = new ArrayList<>();
+    // Full objects for search / delete / report
+    private ArrayList<String[]> all = new ArrayList<>(); // [id, hash, recipient, message, flag]
+    private static final String JSON_FILE = "storedMessages.json";
 
-    int validateMenuOption(int i, Scanner myInput) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public StoredMessages() {}
+
+    // Main calls this: addMessage(id, hash, recipient, text, flag)
+    public void addMessage(String id, String hash, String recipient, String text, String flag) {
+        all.add(new String[]{id, hash, recipient, text, flag});
+        messageIDs.add(id);
+        messageHashes.add(hash);
+        if (flag.equalsIgnoreCase("Sent")) sentMessages.add(text);
+        else if (flag.equalsIgnoreCase("Stored")) storedMessages.add(text);
+        else disregardedMessages.add(text);
     }
 
-    void addMessage(String id, String hash, String recipient, String text, String status) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+    public int getMessageCount() { return all.size(); }
 
-    Iterable<String> getMessageHash() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+    public ArrayList<String> getSentMessages() { return sentMessages; }
+    public ArrayList<String> getDisregardedMessages() { return disregardedMessages; }
+    public ArrayList<String> getStoredMessages() { return storedMessages; }
+    public ArrayList<String> getMessageHash() { return messageHashes; }
+    public ArrayList<String> getMessageID() { return messageIDs; }
 
-    Iterable<String> getMessageID() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    void addMessage(String string, String ittime, String it_is_dinner_time_, String sent) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    void showStoredMessagesMenu(Scanner myInput) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-     public static class MessageRecord {
-        public String id, hash, recipient, text, status, sender;
-        public MessageRecord(String id, String hash, String recipient, String text, String status, String sender) {
-            this.id = id; this.hash = hash; this.recipient = recipient;
-            this.text = text; this.status = status; this.sender = sender;
+    public int validateMenuOption(int max, Scanner sc) {
+        int opt = -1;
+        while (opt < 1 || opt > max) {
+            try { opt = Integer.parseInt(sc.nextLine().trim()); }
+            catch (Exception e) { System.out.println("Enter 1-" + max); }
         }
+        return opt;
     }
 
-    private List<MessageRecord> messages = new ArrayList<>();
-    private List<String> sentMessages = new ArrayList<>();
-    private List<String> disregardedMessages = new ArrayList<>();
-    private List<String> storedMessages = new ArrayList<>();
-    private List<String> messageHashes = new ArrayList<>();
-    private List<String> messageIDs = new ArrayList<>();
-    private static final String FILE = "storedMessages.json";
-
-    // ONE addMessage only - 6 pieces
-    public void addMessage(String id, String hash, String recipient, String text, String status, String sender) {
-        messages.add(new MessageRecord(id, hash, recipient, text, status, sender));
-        populateArrays();
-        if ("Stored".equalsIgnoreCase(status)) {
-            saveStoredMessagesToJSON();
-        }
-    }
-
-    public void addStoredMessage(String id, String hash, String recipient, String text, String status) {
-        addMessage(id, hash, recipient, text, status, "Developer");
-    }
-
-    // 1. Populate the 5 arrays - NO hard-coding
-    public final void populateArrays() {
-        sentMessages.clear(); disregardedMessages.clear(); storedMessages.clear();
-        messageHashes.clear(); messageIDs.clear();
-        for (MessageRecord m : messages) {
-            messageHashes.add(m.hash);
-            messageIDs.add(m.id);
-            if ("Sent".equalsIgnoreCase(m.status)) sentMessages.add(m.text);
-            else if ("Disregard".equalsIgnoreCase(m.status)) disregardedMessages.add(m.text);
-            else if ("Stored".equalsIgnoreCase(m.status)) storedMessages.add(m.text);
-        }
-    }
-
-    public List<String> getSentMessages() { return sentMessages; }
-    public List<String> getDisregardedMessages() { return disregardedMessages; }
-    public List<String> getStoredMessages() { return storedMessages; }
-    public List<String> getMessageHashes() { return messageHashes; }
-    public List<String> getMessageIDs() { return messageIDs; }
-    public int getMessageCount() { return messages.size(); }
-    public List<MessageRecord> getAllMessages() { return messages; }
-
-    // Load the 5 test data messages from the POE
-    public void loadTestData() {
-        if (!messages.isEmpty()) return;
-        // ID = recipient/developer so Search for messageID "0838884567" works (POE p.19)
-        addMessage("+27834557896", "27:0:DIDCAKE", "+27834557896", "Did you get the cake?", "Sent", "Developer");
-        addMessage("+27838884567", "27:1:WHETIME", "+27838884567", "Where are you? You are late! I have asked you to be on time.", "Stored", "Developer");
-        addMessage("+27834484567", "27:2:YOHGATE", "+27834484567", "Yohooo, I am at your gate.", "Disregard", "Developer");
-        addMessage("0838884567", "08:3:ITTIME", "0838884567", "It is dinner time !", "Sent", "Developer");
-        addMessage("+27838884567", "27:4:OKYOU", "+27838884567", "Ok, I am leaving without you.", "Stored", "Developer");
-    }
-
-    //  Display sender and recipient of all stored messages
-    public String displaySenderAndRecipientStored() {
-        StringBuilder sb = new StringBuilder();
-        for (MessageRecord m : messages) {
-            if ("Stored".equalsIgnoreCase(m.status)) {
-                sb.append("Sender: ").append(m.sender).append(", Recipient: ").append(m.recipient).append("\n");
+    // ---- Part 3 menu a to f ----
+    public void showStoredMessagesMenu(Scanner sc) {
+        while (true) {
+            System.out.println("\n--- STORED MESSAGES MENU ---");
+            System.out.println("1) Display sender and recipient of all stored");
+            System.out.println("2) Display longest stored message");
+            System.out.println("3) Search by Message ID");
+            System.out.println("4) Search by Recipient");
+            System.out.println("5) Delete by Hash");
+            System.out.println("6) Display Report");
+            System.out.println("7) Back");
+            System.out.print("Choose: ");
+            int c = validateMenuOption(7, sc);
+            if (c == 7) break;
+            switch (c) {
+                case 1 -> {
+                    for (String[] m : all) if (m[4].equalsIgnoreCase("Stored"))
+                        System.out.println("Sender: Developer | Recipient: " + m[2] + " | Message: " + m[3]);
+                }
+                case 2 -> {
+                    String longest = "";
+                    for (String[] m : all) if (m[4].equalsIgnoreCase("Stored") && m[3].length() > longest.length()) longest = m[3];
+                    System.out.println("Longest: " + longest);
+                }
+                case 3 -> {
+                    System.out.print("Enter Message ID: "); String id = sc.nextLine();
+                    boolean found = false;
+                    for (String[] m : all) if (m[0].equals(id)) { System.out.println("Recipient: " + m[2] + " | Message: " + m[3]); found = true; }
+                    if (!found) System.out.println("Message ID not found.");
+                }
+                case 4 -> {
+                    System.out.print("Enter Recipient: "); String r = sc.nextLine();
+                    for (String[] m : all) if ((m[4].equalsIgnoreCase("Sent") || m[4].equalsIgnoreCase("Stored")) && m[2].equals(r))
+                        System.out.println(m[3]);
+                }
+                case 5 -> {
+                    System.out.print("Enter Message Hash: "); String h = sc.nextLine();
+                    System.out.println(deleteByHash(h));
+                }
+                case 6 -> {
+                    System.out.println("--- STORED MESSAGES REPORT ---");
+                    for (String[] m : all) if (m[4].equalsIgnoreCase("Stored"))
+                        System.out.println("Message Hash: " + m[1] + "\nRecipient: " + m[2] + "\nMessage: " + m[3] + "\n");
+                }
             }
+            try { saveStoredToJson(); } catch (Exception e) {}
         }
-        return sb.toString();
     }
 
-    //  Display the longest stored message
-    public String displayLongestMessage() {
-        String longest = "";
-        for (MessageRecord m : messages) {
-            if ("Stored".equalsIgnoreCase(m.status) && m.text.length() > longest.length()) {
-                longest = m.text;
-            }
-        }
-        // test uses messages 1-4, longest is Message 2 - check all if no stored longest found
-        if (longest.isEmpty()) {
-            for (MessageRecord m : messages) if (m.text.length() > longest.length()) longest = m.text;
-        }
-        return longest;
-    }
-
-    //  Search for a message ID and display recipient and message
-    public String searchByMessageID(String id) {
-        for (MessageRecord m : messages) {
-            if (m.id.equals(id) || m.recipient.equals(id)) {
-                return "Recipient: " + m.recipient + "\nMessage: " + m.text;
-            }
-        }
-        return "Message ID not found.";
-    }
-
-    // Helper for test - returns only message text
-    public String searchMessageTextByID(String id) {
-        for (MessageRecord m : messages) {
-            if (m.id.equals(id) || m.recipient.equals(id)) return m.text;
-        }
-        return "";
-    }
-
-    // Search all messages for a particular recipient
-    public String searchByRecipient(String recipient) {
-        StringBuilder sb = new StringBuilder();
-        for (MessageRecord m : messages) {
-            if (m.recipient.equals(recipient)) {
-                sb.append(m.text).append("\n");
-            }
-        }
-        return sb.toString().trim();
-    }
-
-    // Delete a message using a message hash
     public String deleteByHash(String hash) {
-        for (int i = 0; i < messages.size(); i++) {
-            if (messages.get(i).hash.equalsIgnoreCase(hash)) {
-                String txt = messages.get(i).text;
-                messages.remove(i);
-                populateArrays();
-                saveStoredMessagesToJSON();
-                return "Message: \"" + txt + "\" successfully deleted.";
+        for (int i = 0; i < all.size(); i++) {
+            if (all.get(i)[1].equals(hash)) {
+                String msg = all.get(i)[3];
+                String flag = all.get(i)[4];
+                messageIDs.remove(all.get(i)[0]); messageHashes.remove(hash);
+                if (flag.equalsIgnoreCase("Sent")) sentMessages.remove(msg);
+                else if (flag.equalsIgnoreCase("Stored")) storedMessages.remove(msg);
+                else disregardedMessages.remove(msg);
+                all.remove(i);
+                return "Message: \"" + msg + "\" successfully deleted.";
             }
         }
         return "Message hash not found.";
     }
 
-    // Display report - full details of stored messages
-    public String displayReport() {
-        StringBuilder sb = new StringBuilder();
-        for (MessageRecord m : messages) {
-            if ("Sent".equalsIgnoreCase(m.status)) {
-                sb.append("Message Hash: ").append(m.hash).append("\n");
-                sb.append("Recipient: ").append(m.recipient).append("\n");
-                sb.append("Message: ").append(m.text).append("\n\n");
-            }
+    // ---- JSON plain Java, no library ----
+    public void saveStoredToJson() throws IOException {
+        StringBuilder sb = new StringBuilder("[\n");
+        for (int i = 0; i < all.size(); i++) {
+            String[] m = all.get(i);
+            if (!m[4].equalsIgnoreCase("Stored")) continue;
+            sb.append("  {\"messageID\":\"").append(m[0]).append("\",\"messageHash\":\"").append(m[1])
+              .append("\",\"recipient\":\"").append(m[2]).append("\",\"message\":\"").append(m[3].replace("\"","\\\""))
+              .append("\",\"flag\":\"").append(m[4]).append("\"},\n");
         }
-        return sb.toString();
+        sb.append("]");
+        Files.writeString(Paths.get(JSON_FILE), sb.toString());
     }
 
-    public void saveStoredMessagesToJSON() {
-    try {
-        StringBuilder sb = new StringBuilder();
-        for (MessageRecord m : messages) {
-            if ("Stored".equalsIgnoreCase(m.status)) {
-                sb.append(m.id).append("|").append(m.hash).append("|")
-                  .append(m.recipient).append("|").append(m.text).append("|")
-                  .append(m.status).append("|").append(m.sender).append("\n");
-            }
-        }
-        Files.writeString(Paths.get(FILE), sb.toString());
-    } catch (Exception e) { System.out.println("Save error: " + e.getMessage()); }
-}
+    // Methods your tests will call - keep names simple
+    public String longestMessage() {
+        String longest = "";
+        for (String[] m : all) if (m[4].equalsIgnoreCase("Stored") && m[3].length() > longest.length()) longest = m[3];
+        return longest;
+    }
+    public String searchByID(String id) {
+        for (String[] m : all) if (m[0].equals(id)) return m[3];
+        return "Message ID not found.";
+    }
 
-    public void loadFromJSON() {
-    try {
-        if (!Files.exists(Paths.get(FILE))) return;
-        String content = Files.readString(Paths.get(FILE));
-        if (content.trim().isEmpty()) return;
-        messages.clear();
-        for (String line : content.split("\n")) {
-            if (line.trim().isEmpty()) continue;
-            String[] p = line.split("\\|", -1);
-            if (p.length >= 6) {
-                messages.add(new MessageRecord(p[0], p[1], p[2], p[3], p[4], p[5]));
-            }
-        }
-        populateArrays();
-    } catch (Exception e) { System.out.println("Load error: " + e.getMessage()); }
-}
     
 }
